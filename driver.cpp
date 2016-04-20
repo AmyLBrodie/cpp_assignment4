@@ -32,10 +32,10 @@ int main(int argc, char** argv) {
             image1 = string(argv[2]);
             image2 = string(argv[3]);
             outputImageName = string(argv[4]);
-            BRDAMY004::Image image(image1);
-            BRDAMY004::Image image0(image2);
-            image.load();
-            image0.load();
+            BRDAMY004::Image image;
+            BRDAMY004::Image image0;
+            image.load(image1);
+            image0.load(image2);
             image.addImages(image0);
             image.save(outputImageName);
             break;
@@ -44,10 +44,10 @@ int main(int argc, char** argv) {
             image1 = string(argv[2]);
             image2 = string(argv[3]);
             outputImageName = string(argv[4]);
-            BRDAMY004::Image image(image1);
-            BRDAMY004::Image image0(image2);
-            image.load();
-            image0.load();
+            BRDAMY004::Image image;
+            BRDAMY004::Image image0;
+            image.load(image1);
+            image0.load(image2);
             image.subtractImages(image0);
             image.save(outputImageName);
             break;
@@ -55,8 +55,8 @@ int main(int argc, char** argv) {
         else if (option == "-i"){
             image1 = string(argv[2]);
             outputImageName = string(argv[3]);
-            BRDAMY004::Image image(image1);
-            image.load();
+            BRDAMY004::Image image;
+            image.load(image1);
             image.invertImage();
             image.save(outputImageName);
             break;
@@ -65,10 +65,10 @@ int main(int argc, char** argv) {
             image1 = string(argv[2]);
             image2 = string(argv[3]);
             outputImageName = string(argv[4]);
-            BRDAMY004::Image image(image1);
-            BRDAMY004::Image image0(image2);
-            image.load();
-            image0.load();
+            BRDAMY004::Image image;
+            BRDAMY004::Image image0;
+            image.load(image1);
+            image0.load(image2);
             image.maskImages(image0);
             image.save(outputImageName);
             break;
@@ -77,9 +77,10 @@ int main(int argc, char** argv) {
             image1 = string(argv[2]);
             istringstream iss(argv[3]);
             iss >> f;
+            outputImageName = string(argv[4]);
             cout << f << endl;
-            BRDAMY004::Image image(image1);
-            image.load();
+            BRDAMY004::Image image;
+            image.load(image1);
             image.threshholdImage(f);
             image.save(outputImageName);
             break;

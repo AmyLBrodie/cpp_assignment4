@@ -14,19 +14,18 @@
 #include "Image.h"
 
 namespace BRDAMY004{
-    Image::Image(std::string fileName) : imageName(fileName), data(new unsigned char[1]){
+    Image::Image() : data(new unsigned char[1]){
         
     }
     
-    Image::Image(Image& rhs) : imageName(rhs.imageName), height(rhs.height),data(std::move(rhs.data)), width(rhs.width){
+    Image::Image(Image& rhs) : height(rhs.height),data(std::move(rhs.data)), width(rhs.width){
         
     }
     
-    Image::Image(Image&& rhs) : imageName(std::move(rhs.imageName)), data(std::move(rhs.data)), height(rhs.height), width(rhs.width){
+    Image::Image(Image&& rhs) : data(std::move(rhs.data)), height(rhs.height), width(rhs.width){
         rhs.data.release();
         rhs.width = 0;
         rhs.height = 0;
-        rhs.imageName = "";
     }
     
     Image & Image::operator =(Image& rhs){
@@ -34,7 +33,6 @@ namespace BRDAMY004{
             data = std::move(rhs.data);
             width = rhs.width;
             height = rhs.height;
-            imageName = rhs.imageName;
         }
     }
     
@@ -43,14 +41,15 @@ namespace BRDAMY004{
             data = std::move(rhs.data);
             width = rhs.width;
             height = rhs.height;
-            imageName = std::move(rhs.imageName);
+            rhs.width = 0;
+            rhs.height = 0;
         }
     }
     
     
     
-    void Image::load(){
-        std::ifstream stream(Image::imageName, std::ios::binary);
+    void Image::load(std::string imageName){
+        std::ifstream stream(imageName.c_str(), std::ios::binary);
         std::string temp;
         std::getline(stream, temp, '\n');
         std::getline(stream, temp, '\n');
@@ -64,6 +63,18 @@ namespace BRDAMY004{
         data.reset(new unsigned char [length]);
         stream.read((char *)data.get(), length);
         stream.close();
+    }
+    
+    std::unique_ptr<unsigned char[]> Image::getData(){
+        return std::move(data);
+    }
+    
+    int Image::getHeight(){
+        return height;
+    }
+    
+    int Image::getWidth(){
+        return width;
     }
     
     void Image::save(std::string outputFile){
@@ -80,13 +91,14 @@ namespace BRDAMY004{
         
     }
     
-    Image::iterator::iterator(const iterator& rhs) : ptr(rhs.ptr){
+    Image::iterator::iterator(const iterator& rhs) : ptr(rhs.ptr), index(rhs.index){
         
     }
     
     Image::iterator & Image::iterator::operator =(const iterator& rhs){
         if (this != &rhs){
             ptr = rhs.ptr;
+            index = rhs.index;
         }
     }
     
@@ -120,25 +132,28 @@ namespace BRDAMY004{
         return index == rhs.index;
     }
     
+    int Image::iterator::getIndex(){
+        return index;
+    }
+    
+    u_char Image::iterator::getPtrValue(){
+        return *ptr;
+    }
+    
     Image::iterator Image::begin(){
         Image::iterator it(data.get(), 0);
-        //std::cout << height*width << std::endl;
         return it;
     }
     
     Image::iterator Image::end(){
         Image::iterator it(data.get(), width*height);
-        //std::cout << (int)(data.get())[width*height] << std::endl;
         return it;
     }
     
     Image & Image::operator+(Image image2){
         Image:: iterator itStart2 = image2.begin();
         for (Image::iterator itStart1 = this->begin(); itStart1 != this->end(); itStart1++){
-            //itStart2++;
-            //std::cout << "1" << std::endl;
             int temp = (int)(*itStart1.ptr) + (int)(*itStart2.ptr);
-            std::cout << (int)(*itStart2.ptr) << std::endl;
             if (temp > 255){
                 *itStart1.ptr = (u_char)255;
             }
@@ -178,14 +193,12 @@ namespace BRDAMY004{
     Image & Image::operator*(int f){
         for (Image::iterator itStart1 = this->begin(); itStart1 != this->end(); itStart1++){
             int temp = (int)*itStart1.ptr;
-            std::cout << temp << " ";
             if (temp > f){
                 *itStart1.ptr = (u_char) 255;
             }
             else{
                 *itStart1.ptr = (u_char) 0;
             }
-            std::cout << (int)*itStart1.ptr << std::endl;
         }
         return *this;
     }
@@ -211,6 +224,16 @@ namespace BRDAMY004{
             *itStart1.ptr = (u_char)(255-temp);
         }
         return *this;
+    }
+    
+    bool Image::operator ==(int i){
+        bool flag = true;
+        for (Image::iterator itStart1 = this->begin(); itStart1 != this->end(); itStart1++){
+            if ((int)(*itStart1.ptr) != i){
+                flag = false;
+            }
+        }
+        return flag;
     }
     
     void Image::addImages(Image image2){

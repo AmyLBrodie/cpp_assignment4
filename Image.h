@@ -15,10 +15,8 @@ namespace BRDAMY004{
     private:
         int width, height;
         std::unique_ptr<unsigned char[]> data;
-        std::string imageName;
-        std::string outputImageName;
     public:
-        Image(std::string fileName);
+        Image();
         
         Image(Image & rhs);
         Image(Image && rhs);
@@ -30,14 +28,19 @@ namespace BRDAMY004{
         Image & operator/(Image image2);
         Image & operator*(int f);
         u_char & operator[](int i);
+        bool operator==(int i);
         
-        void load();
+        void load(std::string imageName);
         void save(std::string outputFile);
         void addImages(Image image2);
         void subtractImages(Image image2);
         void invertImage();
         void maskImages(Image image2);
         void threshholdImage(int f);
+        
+        std::unique_ptr<unsigned char[]> getData();
+        int getHeight();
+        int getWidth();
         
         class iterator{
             friend class Image;
@@ -54,6 +57,9 @@ namespace BRDAMY004{
             u_char operator*();
             bool operator!=(iterator rhs);
             bool operator==(iterator rhs);
+            
+            int getIndex();
+            u_char getPtrValue();
         };
         
         iterator begin(void);
