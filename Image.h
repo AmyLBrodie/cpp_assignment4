@@ -1,17 +1,16 @@
 
 /* 
- * File:   Image.h
- * Author: amy
- *
+ * Author: Amy Brodie (BRDAMY004)
+ * CSC3022H Tutorial 4
  * Created on 17 April 2016, 1:54 PM
  */
 
 #ifndef IMAGE_H
 #define IMAGE_H
-namespace BRDAMY004{
-    
 #include <memory>
-    
+#include <string>
+namespace BRDAMY004{
+        
     class Image{
     private:
         int width, height;
@@ -19,8 +18,8 @@ namespace BRDAMY004{
         std::string imageName;
         std::string outputImageName;
     public:
-        Image(std::string fileName,std::string outputFile);
-        ~Image();
+        Image(std::string fileName);
+        
         Image(Image & rhs);
         Image(Image && rhs);
         Image & operator=(Image & rhs);
@@ -30,21 +29,37 @@ namespace BRDAMY004{
         Image & operator!();
         Image & operator/(Image image2);
         Image & operator*(int f);
+        u_char & operator[](int i);
         
-        void load(std::string fileName);
+        void load();
         void save(std::string outputFile);
+        void addImages(Image image2);
+        void subtractImages(Image image2);
+        void invertImage();
+        void maskImages(Image image2);
+        void threshholdImage(int f);
         
         class iterator{
-            private: 
-                unsigned char *ptr;
-                iterator(u_char *p);
+            friend class Image;
+        private: 
+            unsigned char *ptr;
+            int index;
+            iterator(u_char *p, int i);
         public:
             iterator(const iterator & rhs) ;
             iterator & operator=(const iterator & rhs);
-            iterator & operator++();
+            iterator & operator++(void);
+            iterator operator++(int);
             iterator & operator--();
-            iterator & operator*();
+            u_char operator*();
+            bool operator!=(iterator rhs);
+            bool operator==(iterator rhs);
         };
+        
+        iterator begin(void);
+        iterator end(void);
+        
+        ~Image();
     };
 }
 
