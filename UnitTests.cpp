@@ -106,28 +106,49 @@ TEST_CASE("The Thresholding Operator"){
     BRDAMY004::Image image;
     image.load("test1.pgm");
     REQUIRE(image == 255);
-    image.invertImage();
+    image.threshholdImage(255);
     REQUIRE(image == 0);
     
     BRDAMY004::Image image1;
     image1.load("test2.pgm");
     REQUIRE(image1 == 0);
-    image1.invertImage();
+    image1.threshholdImage(-1);
     REQUIRE(image1 == 255);
 }
 
 TEST_CASE("The Masking Operator"){
     BRDAMY004::Image image;
     image.load("test1.pgm");
-    REQUIRE(image == 255);
-    image.invertImage();
-    REQUIRE(image == 0);
-    
     BRDAMY004::Image image1;
     image1.load("test2.pgm");
-    REQUIRE(image1 == 0);
-    image1.invertImage();
-    REQUIRE(image1 == 255);
+    REQUIRE(image == 255);
+    image.maskImages(image1);
+    REQUIRE(image == 0);
 }
 
+
+TEST_CASE("The Addition Operator"){
+    BRDAMY004::Image image;
+    BRDAMY004::Image image1;
+    image.load("test1.pgm");
+    image1.load("test1.pgm");
+    image.addImages(image1);
+    REQUIRE(image == 255);
+    
+    BRDAMY004::Image image2;
+    BRDAMY004::Image image3;
+    image2.load("test2.pgm");
+    image3.load("test2.pgm");
+    image2.addImages(image3);
+    REQUIRE(image2 == 0);
+}
+
+TEST_CASE("The Subtraction Operator"){
+    BRDAMY004::Image image;
+    image.load("test1.pgm");
+    BRDAMY004::Image image1;
+    image1.load("test2.pgm");
+    image1.subtractImages(image);
+    REQUIRE(image1 == 0);
+}
 
