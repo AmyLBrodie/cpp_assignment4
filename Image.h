@@ -12,6 +12,8 @@
 namespace BRDAMY004{
         
     class Image{
+        friend std::ostream & operator<<(std::ostream & stream, Image & img);
+        friend Image & operator>>(std::istringstream & stream, Image & img);
     private:
         int width, height;
         std::unique_ptr<unsigned char[]> data;
@@ -44,6 +46,7 @@ namespace BRDAMY004{
         
         class iterator{
             friend class Image;
+            friend  Image & operator>>(std::istream & stream, Image & img);
         private: 
             unsigned char *ptr;
             int index;
@@ -66,7 +69,13 @@ namespace BRDAMY004{
         iterator end(void);
         
         ~Image();
+        
     };
+    
+    std::ostream & operator<<(std::ostream & stream, Image & img);
+    
+    Image & operator>>(std::istream & stream, Image & img);
+    
 }
 
 #endif /* IMAGE_H */
